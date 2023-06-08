@@ -8,13 +8,14 @@ const {
   uploadProduct
 } = require("../controllers/product.controller");
 const { auth, isOperator } = require("../middlewares/auth");
-const multer = require("multer")
+const {
+  upload: uploadMiddleware,
+  uploadErrorHandler,
+} = require("../middlewares/upload")
 
-const upload = multer ({
-  dest: "upload/"
-})
+const upload = uploadMiddleware.single("picture")
 
-productRouter.patch("/product/upload", auth, isOperator, upload.single("picture"), uploadProduct);
+productRouter.post("/product/upload", auth, isOperator, upload, uploadErrorHandler, uploadProduct);
 
 productRouter.get("/product", auth, isOperator, readAllProduct);
 productRouter.post("/product", auth, isOperator, createProduct);
