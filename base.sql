@@ -20,3 +20,7 @@ CREATE TABLE "product" (
     "createdAt"     TIMESTAMPTZ NOT NULL DEFAULT now(),
     "updatedAt"     TIMESTAMPTZ
 );
+
+ALTER TABLE "users" ALTER COLUMN "fullname" TYPE character varying(255);
+ALTER TABLE "users" ALTER COLUMN "fullname" SET NOT NULL;
+ALTER TABLE "users" RENAME COLUMN "fullname" TO "name";

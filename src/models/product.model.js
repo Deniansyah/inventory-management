@@ -1,7 +1,15 @@
 const db = require("../helpers/db");
 
-exports.selectAllProduct = (cb) => {
-  db.query('SELECT * FROM "product"', cb);
+exports.selectAllProduct = (filter, cb) => {
+  db.query(
+    `SELECT * FROM "product" WHERE ${filter.searchBy} LIKE $3 ORDER BY "${filter.sortBy}" ${filter.sort}  LIMIT $1 OFFSET $2`,
+    [filter.limit, filter.offset, `%${filter.search}%`],
+    cb
+  );
+};
+
+exports.selectCountAllProduct = (filter, cb) => {
+  db.query(`SELECT COUNT("name") AS "totalData" FROM "product"`, cb);
 };
 
 exports.insertProduct = (data, cb) => {

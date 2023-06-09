@@ -1,3 +1,4 @@
+const filter = require("../helpers/filter");
 const response = require("../helpers/response");
 const {
   selectAllUser,
@@ -5,17 +6,28 @@ const {
   selectUser,
   dropUser,
   changeUser,
+  selectCountAllUser,
 } = require("../models/users.model");
 
 
 exports.readAllUser = (req, res) => {
   try {
-    selectAllUser((error, data) => {
-      return res.status(200).json({
-        success: true,
-        message: "Users Data List",
-        results: data.rows,
-      });
+    const searchable = ["name", "email", "createdAt", "updatedAt"];
+    const sortable = ['name', 'email', 'createdAt', 'updatedAt']
+
+    filter(req.query, searchable, sortable, selectCountAllUser, res, (filter, pageInfo) => {
+      try {
+        selectAllUser(filter, (error, data) => {  
+          return res.status(200).json({
+            success : true,
+            message : "Lists all casts",
+            pageInfo,
+            results : data.rows
+          })
+        })
+      } catch (error) {
+        return response(res, 500);
+      }
     });
   } catch (error) {
     return response(res, 500);

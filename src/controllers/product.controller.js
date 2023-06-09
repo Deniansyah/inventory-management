@@ -5,17 +5,29 @@ const {
   selectProduct,
   dropProduct,
   changeProduct,
+  selectCountAllProduct,
 } = require("../models/product.model");
+const filter = require("../helpers/filter")
 
 exports.readAllProduct = (req, res) => {
   try {
-    selectAllProduct((error, data) => {
-      return res.status(200).json({
-        success: true,
-        message: "Product Data List",
-        results: data.rows,
-      });
-    });
+    const searchable = ["fullname", "email", "createdAt", "updatedAt"];
+    const sortable = ["fullname", "email", "createdAt", "updatedAt"];
+
+    filter(req.query, searchable, sortable, selectCountAllProduct, res, (filter, pageInfo) => {
+      try {
+        selectAllProduct(filter, (error, data) => {
+          return res.status(200).json({
+            success: true,
+            message: "Product Data List",
+            pageInfo,
+            results: data.rows,
+          });
+        });
+      } catch (error) {
+        return response(res, 500);
+      }
+    })
   } catch (error) {
     return response(res, 500);
   }
@@ -88,7 +100,7 @@ exports.uploadProduct = (req, res) => {
   if (req.file) {
     res.status(200).json({
       status: true,
-      message: "Upload success"
+      message: "Upload success",
     });
   } else {
     res.status(401).json({

@@ -2,21 +2,23 @@ const db = require("../helpers/db");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
+exports.selectAllUser = (filter, cb) => {
+  db.query(
+    `SELECT * FROM "users" WHERE ${filter.searchBy} LIKE $3 ORDER BY "${filter.sortBy}" ${filter.sort}  LIMIT $1 OFFSET $2`,
+    [filter.limit, filter.offset, `%${filter.search}%`],
+    cb
+  );
+};
 
-exports.selectAllUser = (cb) => {
-  db.query('SELECT * FROM "users"', cb);
+exports.selectCountAllUser = (filter, cb) => {
+  db.query(`SELECT COUNT("name") AS "totalData" FROM "users"`, cb);
 };
 
 exports.insertUser = (data, cb) => {
-  const hashedPassword = bcrypt.hashSync(data.password, saltRounds)
+  const hashedPassword = bcrypt.hashSync(data.password, saltRounds);
   db.query(
     'INSERT INTO "users" ("fullname", "email", "password", "role") VALUES ($1, $2, $3, $4) RETURNING *',
-    [
-      data.fullname,
-      data.email,
-      hashedPassword,
-      data.role,
-    ],
+    [data.fullname, data.email, hashedPassword, data.role],
     cb
   );
 };
