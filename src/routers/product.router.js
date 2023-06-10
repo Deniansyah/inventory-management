@@ -15,7 +15,7 @@ const {
 
 const upload = uploadMiddleware.single("picture")
 
-productRouter.post("/product/upload", auth, isOperator, upload, uploadErrorHandler, uploadProduct);
+productRouter.patch("/product/upload/:id", auth, isOperator, upload, uploadErrorHandler, uploadProduct);
 
 productRouter.get("/product", auth, isOperator, readAllProduct);
 productRouter.post("/product", auth, isOperator, createProduct);

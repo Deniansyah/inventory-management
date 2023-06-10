@@ -35,8 +35,15 @@ exports.readAllUser = (req, res) => {
 };
 
 exports.createUser = (req, res) => {
+  const payload = {
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+    role: req.body.role,
+  };
+
   try {
-    insertUser(req.body, (error, data) => {
+    insertUser(payload, (error, data) => {
       return res.status(200).json({
         status: true,
         message: "User created success",
@@ -49,8 +56,15 @@ exports.createUser = (req, res) => {
 };
 
 exports.updateUser = (req, res) => {
+  const payload = {
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+    role: req.body.role,
+  };
+
   try {
-    changeUser(req.params.id, req.body, (error, data) => {
+    changeUser(req.params.id, payload, (error, data) => {
       return res.status(200).json({
         status: true,
         message: "Updated detail user",

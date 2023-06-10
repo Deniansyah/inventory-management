@@ -8,10 +8,26 @@ const bcrypt = require("bcrypt");
 module.exports = {
   login: (req, res) => {
     try {
-      selectUserByEmail(req.body.email, async (error, { rows }) => {
+      const email = req.body.email
+      const password = req.body.password
+
+      const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (!email.match(mailformat)) {
+        return response(res, 400, {
+          message: "You have entered an invalid email address!",
+        });
+      }
+
+      if (password.length < 8) {
+        return response(res, 400, {
+          message: "Password must be 8 or more characters!",
+        });
+      }
+
+      selectUserByEmail(email, async (error, { rows }) => {
         if (rows.length) {
           const [users] = rows;
-          if (await bcrypt.compare(req.body.password, users.password)) {
+          if (await bcrypt.compare(password, users.password)) {
             const token = jwt.sign(
               { id: users.id, email: users.email, role: users.role },
               JWT_SECRET

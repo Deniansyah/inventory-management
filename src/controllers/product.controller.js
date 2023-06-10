@@ -8,11 +8,13 @@ const {
   selectCountAllProduct,
 } = require("../models/product.model");
 const filter = require("../helpers/filter")
+const { cloudinary } = require("../middlewares/upload")
+
 
 exports.readAllProduct = (req, res) => {
   try {
-    const searchable = ["fullname", "email", "createdAt", "updatedAt"];
-    const sortable = ["fullname", "email", "createdAt", "updatedAt"];
+    const searchable = ["name", "email", "createdAt", "updatedAt"];
+    const sortable = ["name", "email", "createdAt", "updatedAt"];
 
     filter(req.query, searchable, sortable, selectCountAllProduct, res, (filter, pageInfo) => {
       try {
@@ -56,8 +58,17 @@ exports.createProduct = (req, res) => {
 };
 
 exports.updateProduct = (req, res) => {
+  const stock = req.body.stock ? req.body.stock : 0;
+  const payload = {
+    picture: req.body.picture,
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price,
+    stock: stock,
+  };
+
   try {
-    changeProduct(req.params.id, req.body, (error, data) => {
+    changeProduct(req.params.id, payload, (error, data) => {
       return res.status(200).json({
         status: true,
         message: "Updated detail product",
@@ -97,15 +108,26 @@ exports.readProduct = (req, res) => {
 };
 
 exports.uploadProduct = (req, res) => {
-  if (req.file) {
-    res.status(200).json({
-      status: true,
-      message: "Upload success",
-    });
-  } else {
-    res.status(401).json({
-      status: false,
-      message: "Upload photo failed!",
-    });
+  try {
+    selectProduct(req.params.id, (error, results) => {
+      const data = results.rows[0];
+      if (data.picture) {
+        const fileName = data?.picture?.split("/").pop()?.split(".")[0];
+        cloudinary.uploader.destroy(`upload/${fileName}`);
+      }
+
+      const payload = {
+        picture: req.file.path,
+      };
+
+      changeProduct(req.params.id, payload, (error, data) => {
+        return res.status(200).json({
+          success: true,
+          message: "Profile picture successfully updated",
+        });
+      });
+    })
+  } catch (error) {
+    return response(res, 500);
   }
 };
