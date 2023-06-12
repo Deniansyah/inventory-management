@@ -81,16 +81,15 @@ exports.updateProduct = (req, res) => {
 };
 
 exports.deleteProduct = (req, res) => {
-  try {
-    dropProduct(req.params.id, (error, data) => {
-      res.status(200).json({
-        status: true,
-        message: "Delete data product id = " + req.params.id + " success",
-      });
+  dropProduct(req.params.id, (error) => {
+    if (error) {
+      return response(res, 500);
+    }
+    res.status(200).json({
+      status: true,
+      message: "Delete data product id = " + req.params.id + " success",
     });
-  } catch (error) {
-    return response(res, 500);
-  }
+  });
 };
 
 exports.readProduct = (req, res) => {
@@ -120,16 +119,18 @@ exports.uploadProduct = (req, res) => {
         picture: req.file.path,
       };
 
-      try {
-        changeProduct(req.params.id, payload, (error, data) => {
-          return res.status(200).json({
-            success: true,
-            message: "Product picture successfully updated",
-          });
+      changeProduct(req.params.id, payload, (error) => {
+        if (error) {
+          return response(res, 400, {
+            success: false,
+            message: "Failed to upload!"
+          })
+        }
+        return res.status(200).json({
+          success: true,
+          message: "Product picture successfully updated",
         });
-      } catch (error) {
-        return response(res, 500);
-      }
+      });
     })
   } catch (error) {
     return response(res, 500);

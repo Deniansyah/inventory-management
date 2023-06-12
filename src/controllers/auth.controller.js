@@ -11,7 +11,7 @@ module.exports = {
       const email = req.body.email
       const password = req.body.password
 
-      const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      const mailformat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
       if (!email.match(mailformat)) {
         return response(res, 400, {
           message: "You have entered an invalid email address!",

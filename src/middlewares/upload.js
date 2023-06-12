@@ -30,7 +30,7 @@ const storage = new CloudinaryStorage({
   params: {
     folder: "upload",
     format: async (req, file) => path.extname(file.originalname).slice("1"), // supports promises as well
-    public_id: (req, file) => {
+    public_id: () => {
       const randomNumber = Math.round(Math.random() * 90000);
       const filename = `${randomNumber}${Date.now()}`;
 
@@ -53,7 +53,7 @@ const upload = multer({
   },
 });
 
-const uploadErrorHandler = (err, req, res, next) => {
+const uploadErrorHandler = (err, req, res,) => {
   if (err instanceof multer.MulterError) {
     if (err.code === "LIMIT_FILE_SIZE") {
       res.status(400).json({

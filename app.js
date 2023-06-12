@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const { PORT } = require("./src/helpers/env");
-const response = require("./src/helpers/response");
 const authRouter = require("./src/routers/auth.router");
 const usersRouter = require("./src/routers/user.router");
 const productRouter = require("./src/routers/product.router");

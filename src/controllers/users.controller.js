@@ -47,7 +47,7 @@ exports.createUser = (req, res) => {
     picture: req.body.picture,
   };
 
-  const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  const mailformat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
   if (!payload.email.match(mailformat)) {
     return response(res, 400, {
       message: "You have entered an invalid email address!",
@@ -82,7 +82,7 @@ exports.updateUser = (req, res) => {
     picture: req.body.picture,
   };
 
-  const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  const mailformat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
   if (!payload.email.match(mailformat)) {
     return response(res, 400, {
       message: "You have entered an invalid email address!",
@@ -109,16 +109,15 @@ exports.updateUser = (req, res) => {
 };
 
 exports.deleteUser = (req, res) => {
-  try {
-    dropUser(req.params.id, (error, data) => {
-      res.status(200).json({
-        status: true,
-        message: "Delete data user id = " + req.params.id + " success",
-      });
+  dropUser(req.params.id, (error) => {
+    if (error) {
+      return response(res, 500);
+    }
+    res.status(200).json({
+      status: true,
+      message: "Delete data user id = " + req.params.id + " success",
     });
-  } catch (error) {
-    return response(res, 500);
-  }
+  });
 };
 
 exports.readUser = (req, res) => {
@@ -152,7 +151,13 @@ exports.uploadUserPicture = (req, res) => {
         picture: req.file.path,
       };
 
-      changePicture(id, payload, (error, data) => {
+      changePicture(id, payload, (error) => {
+        if (error) {
+          return response(res, 400, {
+            success: false,
+            message: "Failed to upload!",
+          });
+        }
         return res.status(200).json({
           success: true,
           message: "Profile picture successfully updated",

@@ -64,16 +64,15 @@ exports.updateStock = (req, res) => {
 };
 
 exports.deleteStock = (req, res) => {
-  try {
-    dropStock(req.params.id, (error, data) => {
-      return res.status(200).json({
-        status: true,
-        message: "Deleted stock id = " + req.params.id + " success",
-      });
-    })
-  } catch (error) {
-    return response(res, 500);
-  }
+  dropStock(req.params.id, (error) => {
+    if (error) {
+      return response(res, 500);
+    }
+    return res.status(200).json({
+      status: true,
+      message: "Deleted stock id = " + req.params.id + " success",
+    });
+  });
 };
 
 exports.readStock = (req, res) => {
