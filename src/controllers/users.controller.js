@@ -47,6 +47,19 @@ exports.createUser = (req, res) => {
     picture: req.body.picture,
   };
 
+  const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  if (!payload.email.match(mailformat)) {
+    return response(res, 400, {
+      message: "You have entered an invalid email address!",
+    });
+  }
+
+  if (payload.password.length < 8) {
+    return response(res, 400, {
+      message: "Password must be 8 or more characters!",
+    });
+  }
+
   try {
     insertUser(payload, (error, data) => {
       return res.status(200).json({
@@ -68,6 +81,19 @@ exports.updateUser = (req, res) => {
     role: req.body.role,
     picture: req.body.picture,
   };
+
+  const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  if (!payload.email.match(mailformat)) {
+    return response(res, 400, {
+      message: "You have entered an invalid email address!",
+    });
+  }
+
+  if (payload.password.length < 8) {
+    return response(res, 400, {
+      message: "Password must be 8 or more characters!",
+    });
+  }
 
   try {
     changeUser(req.params.id, payload, (error, data) => {
