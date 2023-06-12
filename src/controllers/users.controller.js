@@ -7,7 +7,11 @@ const {
   dropUser,
   changeUser,
   selectCountAllUser,
+  changePicture,
 } = require("../models/users.model");
+const jwt = require("jsonwebtoken")
+const { JWT_SECRET } = require("../helpers/env")
+const { cloudinary } = require("../middlewares/upload");
 
 
 exports.readAllUser = (req, res) => {
@@ -40,6 +44,7 @@ exports.createUser = (req, res) => {
     email: req.body.email,
     password: req.body.password,
     role: req.body.role,
+    picture: req.body.picture,
   };
 
   try {
@@ -61,6 +66,7 @@ exports.updateUser = (req, res) => {
     email: req.body.email,
     password: req.body.password,
     role: req.body.role,
+    picture: req.body.picture,
   };
 
   try {
@@ -102,3 +108,32 @@ exports.readUser = (req, res) => {
     return response(res, 500);
   }
 };
+
+exports.uploadUserPicture = (req, res) => {
+  const authorization = req.headers.authorization;
+  const token = authorization.split(" ")[1];
+  const { id } = jwt.verify(token, JWT_SECRET);
+  try {
+    selectUser(id, (error, results) => {
+      const data = results.rows[0];
+
+      if (data.picture) {
+        const fileName = data?.picture?.split("/").pop()?.split(".")[0];
+        cloudinary.uploader.destroy(`upload/${fileName}`);
+      }
+
+      const payload = {
+        picture: req.file.path,
+      };
+
+      changePicture(id, payload, (error, data) => {
+        return res.status(200).json({
+          success: true,
+          message: "Profile picture successfully updated",
+        });
+      })
+    })
+  } catch (error) {
+    return response(res, 500);
+  }
+}

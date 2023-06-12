@@ -17,17 +17,25 @@ exports.selectCountAllUser = (filter, cb) => {
 exports.insertUser = (data, cb) => {
   const hashedPassword = bcrypt.hashSync(data.password, saltRounds);
   db.query(
-    'INSERT INTO "users" ("fullname", "email", "password", "role") VALUES ($1, $2, $3, $4) RETURNING *',
-    [data.fullname, data.email, hashedPassword, data.role],
+    'INSERT INTO "users" ("name", "email", "password", "role", "picture") VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    [data.name, data.email, hashedPassword, data.role, data.picture],
     cb
   );
 };
 
 exports.changeUser = (id, data, cb) => {
-  const hashedPassword = bcrypt.hashSync(data.password, saltRounds);
+  const hashedPassword = bcrypt.hashSync(data.password, saltRounds)
   db.query(
-    'UPDATE users SET "fullname" = COALESCE(NULLIF($2, \'\'), "fullname"), "email" = COALESCE(NULLIF($3, \'\'), "email"), "password" = COALESCE(NULLIF($4, \'\'), "password"), "role" = COALESCE(NULLIF($5, \'\')::INT, "role") WHERE id = $1 RETURNING *',
-    [id, data.fullname, data.email, hashedPassword, data.role],
+    'UPDATE users SET "name" = COALESCE(NULLIF($2, \'\'), "name"), "email" = COALESCE(NULLIF($3, \'\'), "email"), "password" = COALESCE(NULLIF($4, \'\'), "password"), "role" = COALESCE(NULLIF($5, \'\')::INT, "role"), "picture" = COALESCE(NULLIF($6, \'\'), "picture") WHERE id = $1 RETURNING *',
+    [id, data.name, data.email, hashedPassword, data.role, data.picture],
+    cb
+  );
+};
+
+exports.changePicture = (id, data, cb) => {
+  db.query(
+    'UPDATE users SET "picture" = COALESCE(NULLIF($2, \'\'), "picture") WHERE id = $1 RETURNING *',
+    [id, data.picture],
     cb
   );
 };

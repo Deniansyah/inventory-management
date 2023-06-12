@@ -5,9 +5,17 @@ const {
   updateUser,
   deleteUser,
   readUser,
+  uploadUserPicture,
 } = require("../controllers/users.controller");
 const { auth, isAdmin } = require("../middlewares/auth");
+const {
+  upload: uploadMiddleware,
+  uploadErrorHandler,
+} = require("../middlewares/upload");
 
+const upload = uploadMiddleware.single("picture");
+
+usersRouter.patch("/upload", auth, upload, uploadErrorHandler, uploadUserPicture)
 
 usersRouter.get("/users", auth, isAdmin, readAllUser);
 usersRouter.post("/users", auth, isAdmin, createUser);

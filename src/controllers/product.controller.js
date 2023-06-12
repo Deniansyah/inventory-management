@@ -120,12 +120,16 @@ exports.uploadProduct = (req, res) => {
         picture: req.file.path,
       };
 
-      changeProduct(req.params.id, payload, (error, data) => {
-        return res.status(200).json({
-          success: true,
-          message: "Profile picture successfully updated",
+      try {
+        changeProduct(req.params.id, payload, (error, data) => {
+          return res.status(200).json({
+            success: true,
+            message: "Product picture successfully updated",
+          });
         });
-      });
+      } catch (error) {
+        return response(res, 500);
+      }
     })
   } catch (error) {
     return response(res, 500);

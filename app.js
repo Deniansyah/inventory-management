@@ -5,6 +5,7 @@ const response = require("./src/helpers/response");
 const authRouter = require("./src/routers/auth.router");
 const usersRouter = require("./src/routers/user.router");
 const productRouter = require("./src/routers/product.router");
+const stockRouter = require("./src/routers/stock.router");
 
 const app = express()
 
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 app.use(authRouter);
 app.use(usersRouter);
 app.use(productRouter);
+app.use(stockRouter);
 
 const APP_PORT = PORT || 3001;
 app.listen(APP_PORT, () => {
