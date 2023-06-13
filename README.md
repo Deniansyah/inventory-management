@@ -42,7 +42,7 @@
   
 -   Import COLLECTION_INVMANA.json to Postman
   
--   Set up your ENV - Example in folder helpers/env.js
+-   Set up your ENV
   
 -   Install the dependencies.
 
