@@ -53,7 +53,7 @@ const upload = multer({
   },
 });
 
-const uploadErrorHandler = (err, req, res,) => {
+const uploadErrorHandler = (err, req, res, next) => {
   if (err instanceof multer.MulterError) {
     if (err.code === "LIMIT_FILE_SIZE") {
       res.status(400).json({
@@ -72,6 +72,7 @@ const uploadErrorHandler = (err, req, res,) => {
       message: err.message,
     });
   }
+  next()
 };
 
 module.exports = {

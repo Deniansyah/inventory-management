@@ -82,17 +82,19 @@ exports.updateUser = (req, res) => {
     picture: req.body.picture,
   };
 
-  const mailformat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-  if (!payload.email.match(mailformat)) {
-    return response(res, 400, {
-      message: "You have entered an invalid email address!",
-    });
-  }
+  if (req.body.email && req.body.password) {
+    const mailformat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    if (!payload.email.match(mailformat)) {
+      return response(res, 400, {
+        message: "You have entered an invalid email address!",
+      });
+    }
 
-  if (payload.password.length < 8) {
-    return response(res, 400, {
-      message: "Password must be 8 or more characters!",
-    });
+    if (payload.password.length < 8) {
+      return response(res, 400, {
+        message: "Password must be 8 or more characters!",
+      });
+    }
   }
 
   try {
