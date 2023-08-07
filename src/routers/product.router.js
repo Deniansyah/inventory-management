@@ -18,7 +18,7 @@ const upload = uploadMiddleware.single("picture")
 productRouter.patch("/product/upload/:id", auth, isOperator, upload, uploadErrorHandler, uploadProduct);
 
 productRouter.get("/product", auth, isOperator, readAllProduct);
-productRouter.post("/product", auth, isOperator, createProduct);
+productRouter.post("/product", auth, isOperator,  upload, uploadErrorHandler, createProduct);
 productRouter.patch("/product/:id", auth, isOperator, updateProduct);
 productRouter.delete("/product/:id", auth, isOperator, deleteProduct);
 productRouter.get("/product/:id", auth, isOperator, readProduct);

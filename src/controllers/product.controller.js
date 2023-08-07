@@ -39,6 +39,7 @@ exports.createProduct = (req, res) => {
   try {
     const stock = req.body.stock ? req.body.stock : 0;
     const payload = {
+      picture: req.file.path,
       name: req.body.name,
       description: req.body.description,
       price: req.body.price,

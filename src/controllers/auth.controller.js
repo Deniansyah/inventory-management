@@ -34,6 +34,8 @@ module.exports = {
             );
             return response(res, 200, {
               data: token,
+              name: users.name,
+              role: users.role,
               message: "Login success",
             });
           }
