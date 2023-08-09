@@ -19,7 +19,7 @@ productRouter.patch("/product/upload/:id", auth, isOperator, upload, uploadError
 
 productRouter.get("/product", auth, isOperator, readAllProduct);
 productRouter.post("/product", auth, isOperator,  upload, uploadErrorHandler, createProduct);
-productRouter.patch("/product/:id", auth, isOperator, updateProduct);
+productRouter.patch("/product/:id", auth, isOperator, upload, uploadErrorHandler, updateProduct);
 productRouter.delete("/product/:id", auth, isOperator, deleteProduct);
 productRouter.get("/product/:id", auth, isOperator, readProduct);
 

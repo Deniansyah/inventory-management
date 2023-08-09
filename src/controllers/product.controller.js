@@ -39,7 +39,7 @@ exports.createProduct = (req, res) => {
   try {
     const stock = req.body.stock ? req.body.stock : 0;
     const payload = {
-      picture: req.file.path,
+      picture: req.file ? req.file.path : null,
       name: req.body.name,
       description: req.body.description,
       price: req.body.price,
@@ -54,26 +54,41 @@ exports.createProduct = (req, res) => {
       });
     });
   } catch (error) {
+    console.log(error);
     return response(res, 500);
   }
 };
 
 exports.updateProduct = (req, res) => {
-  const stock = req.body.stock ? req.body.stock : 0;
-  const payload = {
-    picture: req.body.picture,
-    name: req.body.name,
-    description: req.body.description,
-    price: req.body.price,
-    stock: stock,
-  };
-
   try {
-    changeProduct(req.params.id, payload, (error, data) => {
-      return res.status(200).json({
-        status: true,
-        message: "Updated detail product",
-        results: data.rows[0],
+    selectProduct(req.params.id, (error, results) => {
+      const data = results.rows[0];
+      if (data.picture) {
+        const fileName = data?.picture?.split("/").pop()?.split(".")[0];
+        cloudinary.uploader.destroy(`upload/${fileName}`);
+      }
+
+      const stock = req.body.stock ? req.body.stock : 0;
+      const payload = {
+        picture: req.file ? req.file.path : null,
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price,
+        stock: stock,
+      };
+
+      changeProduct(req.params.id, payload, (error, data) => {
+        if (error) {
+          return response(res, 400, {
+            success: false,
+            message: "Failed to update!",
+          });
+        }
+        return res.status(200).json({
+          success: true,
+          message: "Updated detail product",
+          results: data.rows[0],    
+        });
       });
     });
   } catch (error) {
