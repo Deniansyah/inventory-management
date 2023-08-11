@@ -6,8 +6,9 @@ const {
   deleteUser,
   readUser,
   uploadUserPicture,
+  readUserOperator,
 } = require("../controllers/users.controller");
-const { auth, isAdmin } = require("../middlewares/auth");
+const { auth, isAdmin, isOperator } = require("../middlewares/auth");
 const {
   upload: uploadMiddleware,
   uploadErrorHandler,
@@ -22,5 +23,7 @@ usersRouter.post("/users", auth, isAdmin, upload, uploadErrorHandler, createUser
 usersRouter.patch("/users/:id", auth, isAdmin, upload, uploadErrorHandler, updateUser);
 usersRouter.delete("/users/:id", auth, isAdmin, deleteUser);
 usersRouter.get("/users/:id", auth, isAdmin, readUser);
+
+usersRouter.get("/users-operator/:id", auth, isOperator, readUserOperator);
 
 module.exports = usersRouter;

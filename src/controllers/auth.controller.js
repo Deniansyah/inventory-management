@@ -38,9 +38,9 @@ module.exports = {
               role: users.role,
               message: "Login success",
             });
+          }else{
+            return response(res, 404, { message: "Email or Password wrong" });
           }
-        } else {
-          return response(res, 404, { message: "Email or Password wrong" });
         }
       });
     } catch (error) {

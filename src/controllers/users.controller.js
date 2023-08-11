@@ -151,6 +151,20 @@ exports.readUser = (req, res) => {
   }
 };
 
+exports.readUserOperator = (req, res) => {
+  try {
+    selectUser(req.params.id, (error, data) => {
+      res.status(200).json({
+        status: true,
+        message: "Detail User",
+        results: data.rows[0],
+      });
+    });
+  } catch (error) {
+    return response(res, 500);
+  }
+};
+
 exports.uploadUserPicture = (req, res) => {
   const authorization = req.headers.authorization;
   const token = authorization.split(" ")[1];
