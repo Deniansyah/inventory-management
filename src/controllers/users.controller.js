@@ -16,22 +16,21 @@ const { cloudinary } = require("../middlewares/upload");
 
 exports.readAllUser = (req, res) => {
   try {
-    const searchable = ["name", "email", "createdAt", "updatedAt"];
-    const sortable = ['name', 'email', 'createdAt', 'updatedAt']
+    const searchable = ["name", "email", "role", "createdAt"];
+    const sortable = ["name", "email", "role", "createdAt"];
 
     filter(req.query, searchable, sortable, selectCountAllUser, res, (filter, pageInfo) => {
-      try {
-        selectAllUser(filter, (error, data) => {  
-          return res.status(200).json({
-            success : true,
-            message : "Lists all casts",
-            pageInfo,
-            results : data.rows
-          })
-        })
-      } catch (error) {
-        return response(res, 500);
-      }
+      selectAllUser(filter, (error, data) => {
+        if (error) {
+          return response(res, 404, { message: "Error in model" });
+        }
+        return res.status(200).json({
+          success: true,
+          message: "Lists all casts",
+          pageInfo,
+          results: data.rows,
+        });
+      });
     });
   } catch (error) {
     return response(res, 500);

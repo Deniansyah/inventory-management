@@ -7,6 +7,7 @@ const filter = (data, searchable, sortable, countModel, res, cb) => {
   data.search = data.search || '' 
   data.sortBy = (sortable.includes(data.sortBy) && data.sortBy) || "createdAt";
   data.sort = data.sort || 'ASC' 
+  data.role = parseInt(data.role, 10) || null;
 
   const params = {
     limit : data.limit,
@@ -14,12 +15,12 @@ const filter = (data, searchable, sortable, countModel, res, cb) => {
     searchBy : data.searchBy,
     search : data.search,
     sortBy : data.sortBy,
-    sort : data.sort
+    sort : data.sort,
+    role : data.role
   }
 
   const pageInfo = {
     page : data.page,
-
   }
 
   countModel(params, (error, results) => {

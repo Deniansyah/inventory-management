@@ -4,16 +4,16 @@ const saltRounds = 10;
 
 exports.selectAllUser = (filter, cb) => {
   db.query(
-    `SELECT * FROM "users" WHERE ${filter.searchBy} ILIKE $3 ORDER BY "${filter.sortBy}" ${filter.sort}  LIMIT $1 OFFSET $2`,
-    [filter.limit, filter.offset, `%${filter.search}%`],
+    `SELECT * FROM "users" WHERE ${filter.searchBy} ILIKE $3 AND ($4::INT IS NULL OR "role" = $4::INT) ORDER BY "${filter.sortBy}" ${filter.sort}  LIMIT $1 OFFSET $2`,
+    [filter.limit, filter.offset, `%${filter.search}%`, filter.role],
     cb
   );
 };
 
 exports.selectCountAllUser = (filter, cb) => {
   db.query(
-    `SELECT COUNT("name") AS "totalData" FROM "users"  WHERE name ILIKE $1`,
-    [`%${filter.search}%`],
+    `SELECT COUNT("name") AS "totalData" FROM "users"  WHERE name ILIKE $1 AND ($2::INT IS NULL OR "role" = $2::INT)`,
+    [`%${filter.search}%`, filter.role],
     cb
   );
 };
