@@ -13,8 +13,8 @@ const { cloudinary } = require("../middlewares/upload")
 
 exports.readAllProduct = (req, res) => {
   try {
-    const searchable = ["name", "email", "createdAt", "updatedAt"];
-    const sortable = ["name", "email", "createdAt", "updatedAt"];
+    const searchable = ["name", "description", "createdAt"];
+    const sortable = ["name", "description", "createdAt"];
 
     filter(req.query, searchable, sortable, selectCountAllProduct, res, (filter, pageInfo) => {
       try {
@@ -23,7 +23,7 @@ exports.readAllProduct = (req, res) => {
             success: true,
             message: "Product Data List",
             pageInfo,
-            results: data.rows,
+            results: data?.rows,
           });
         });
       } catch (error) {
