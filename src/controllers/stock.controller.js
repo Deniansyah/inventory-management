@@ -111,12 +111,13 @@ exports.updateEditStock = (req, res) => {
       });
     }
 
+    const typeInt = parseInt(req.body.type)
     const stockDb = parseInt(data.rows[0].stock)
     const qtyInt = parseInt(req.body.quantity)
 
     const stock = stockDb < qtyInt ? stockDb + qtyInt : stockDb - qtyInt;
     const payloadProduct = {
-      stock: stock,
+      stock: typeInt === 3 ? qtyInt : stock,
     };
 
     changeProduct(req.params.id, payloadProduct, (error) => {
