@@ -6,8 +6,8 @@ exports.selectAllStock = (cb) => {
 
 exports.insertStock = (data, cb) => {
   db.query(
-    'INSERT INTO "stock" ("product_id", "users_id", "date", "type") VALUES ($1, $2, $3, $4) RETURNING *',
-    [data.product_id, data.users_id, data.date, data.type],
+    'INSERT INTO "stock" ("product_id", "users_id", "quantity", "date", "type", "remark") VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+    [data.product_id, data.users_id, data.quantity, data.date, data.type, data.remark],
     cb
   );
 };

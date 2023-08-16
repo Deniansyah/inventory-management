@@ -1,7 +1,7 @@
 const response = require("../helpers/response");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../helpers/env");
-const { changeProduct } = require("../models/product.model");
+const { changeProduct, selectProduct } = require("../models/product.model");
 const {
   selectAllStock,
   insertStock,
@@ -80,7 +80,7 @@ exports.updateEditStock = (req, res) => {
     const id = decodedToken.id;
 
     const payloadStock = {
-      product_id: req.body.id,
+      product_id: req.params.id,
       users_id: id,
       date: req.body.date,
       type: req.body.type,
@@ -103,20 +103,31 @@ exports.updateEditStock = (req, res) => {
     });
   });
 
-  const stock = req.body.stock ? req.body.stock : 0;
-  const payloadProduct = {
-    stock: stock,
-  };
-
-  changeProduct(req.params.id, payloadProduct, (error) => {
+  selectProduct(req.params.id, (error, data) => {
     if (error) {
       return response(res, 400, {
         success: false,
-        message: "Failed to update product",
+        message: "Failed to check stock product",
       });
     }
-  });
 
+    const stockDb = parseInt(data.rows[0].stock)
+    const qtyInt = parseInt(req.body.quantity)
+
+    const stock = stockDb < qtyInt ? stockDb + qtyInt : stockDb - qtyInt;
+    const payloadProduct = {
+      stock: stock,
+    };
+
+    changeProduct(req.params.id, payloadProduct, (error) => {
+      if (error) {
+        return response(res, 400, {
+          success: false,
+          message: "Failed to update product",
+        });
+      }
+    });
+  });
 };
 
 exports.deleteStock = (req, res) => {
