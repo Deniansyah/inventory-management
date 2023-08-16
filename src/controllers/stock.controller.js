@@ -66,71 +66,6 @@ exports.updateStock = (req, res) => {
   }
 };
 
-exports.updateEditStock = (req, res) => {
-  const tokenHeader = req.headers.authorization;
-  const token = tokenHeader.split(" ")[1];
-
-  jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
-    if (err) {
-      return response(res, 400, {
-        success: false,
-        message: "Token tidak valid",
-      });
-    }
-    const id = decodedToken.id;
-
-    const payloadStock = {
-      product_id: req.params.id,
-      users_id: id,
-      date: req.body.date,
-      type: req.body.type,
-      remark: req.body.remark,
-      quantity: req.body.quantity,
-    };
-
-    insertStock(payloadStock, (error, data) => {
-      if (error) {
-        return response(res, 400, {
-          success: false,
-          message: "Failed to create stock",
-        });
-      }
-      return res.status(200).json({
-        status: true,
-        message: "Stock add successfully",
-        results: data.rows[0],
-      });
-    });
-  });
-
-  selectProduct(req.params.id, (error, data) => {
-    if (error) {
-      return response(res, 400, {
-        success: false,
-        message: "Failed to check stock product",
-      });
-    }
-
-    const typeInt = parseInt(req.body.type)
-    const stockDb = parseInt(data.rows[0].stock)
-    const qtyInt = parseInt(req.body.quantity)
-
-    const stock = stockDb < qtyInt ? stockDb + qtyInt : stockDb - qtyInt;
-    const payloadProduct = {
-      stock: typeInt === 3 ? qtyInt : stock,
-    };
-
-    changeProduct(req.params.id, payloadProduct, (error) => {
-      if (error) {
-        return response(res, 400, {
-          success: false,
-          message: "Failed to update product",
-        });
-      }
-    });
-  });
-};
-
 exports.deleteStock = (req, res) => {
   dropStock(req.params.id, (error) => {
     if (error) {
@@ -156,3 +91,67 @@ exports.readStock = (req, res) => {
     return response(res, 500);
   }
 };
+
+exports.updateEditStock = async (req, res) => {
+  const tokenHeader = req.headers.authorization;
+  const token = tokenHeader.split(" ")[1];
+  const decode = await jwt.verify(token, JWT_SECRET);
+  const id = decode.id
+  
+  try {
+    selectProduct(req.params.id, (error, data) => {
+      const payloadStock = {
+        product_id: req.params.id,
+        users_id: id,
+        date: req.body.date,
+        type: req.body.type,
+        remark: req.body.remark,
+        quantity: req.body.quantity,
+      };
+
+      const typeInt = parseInt(req.body.type);
+      const stockDb = parseInt(data.rows[0].stock);
+      const qtyInt = parseInt(req.body.quantity);
+
+      if (typeInt === 2 && qtyInt > stockDb) {
+        return response(res, 400, {
+          success: false,
+          message: "Stock tidak mencukupi untuk di kurangi",
+        });
+      }
+
+      const stock = stockDb < qtyInt ? stockDb + qtyInt : stockDb - qtyInt;
+      const payloadProduct = {
+        stock: typeInt === 3 ? qtyInt : stock,
+      };
+
+      changeProduct(req.params.id, payloadProduct, (error) => {
+        if (error) {
+          return response(res, 400, {
+            success: false,
+            message: "Failed to update product",
+          });
+        }
+
+        insertStock(payloadStock, (error, data) => {
+          if (error) {
+            return response(res, 400, {
+              success: false,
+              message: "Failed to create stock",
+            });
+          }
+          return res.status(200).json({
+            status: true,
+            message: "Stock add successfully",
+            results: data.rows[0],
+          });
+        });
+      });
+    })
+  } catch (error) {
+    return response(res, 400, {
+      success: false,
+      message: "Failed to check stock product",
+    });
+  }
+}
