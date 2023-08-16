@@ -1,7 +1,7 @@
 const db = require("../helpers/db");
 
 exports.selectAllStock = (cb) => {
-  db.query('SELECT * FROM "stock"', cb);
+  db.query('SELECT s.id AS stock_id, p.name AS product_name, u.name AS user_name, s.quantity, s.date, s.type, s.remark, s."createdAt", s."updatedAt" FROM stock s LEFT JOIN product p ON s.product_id = p.id LEFT JOIN users u ON s.users_id = u.id', cb);
 };
 
 exports.insertStock = (data, cb) => {

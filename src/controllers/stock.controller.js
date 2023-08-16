@@ -1,4 +1,7 @@
 const response = require("../helpers/response");
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../helpers/env");
+const { changeProduct } = require("../models/product.model");
 const {
   selectAllStock,
   insertStock,
@@ -61,6 +64,59 @@ exports.updateStock = (req, res) => {
   } catch (error) {
     return response(res, 500);
   }
+};
+
+exports.updateEditStock = (req, res) => {
+  const tokenHeader = req.headers.authorization;
+  const token = tokenHeader.split(" ")[1];
+
+  jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
+    if (err) {
+      return response(res, 400, {
+        success: false,
+        message: "Token tidak valid",
+      });
+    }
+    const id = decodedToken.id;
+
+    const payloadStock = {
+      product_id: req.body.id,
+      users_id: id,
+      date: req.body.date,
+      type: req.body.type,
+      remark: req.body.remark,
+      quantity: req.body.quantity,
+    };
+
+    insertStock(payloadStock, (error, data) => {
+      if (error) {
+        return response(res, 400, {
+          success: false,
+          message: "Failed to create stock",
+        });
+      }
+      return res.status(200).json({
+        status: true,
+        message: "Stock add successfully",
+        results: data.rows[0],
+      });
+    });
+  });
+
+  const stock = req.body.stock ? req.body.stock : 0;
+  const payloadProduct = {
+    stock: stock,
+  };
+
+  changeProduct(req.params.id, payloadProduct, (error) => {
+    if (error) {
+      return response(res, 400, {
+        success: false,
+        message: "Failed to update product",
+      });
+    }
+  });
+
 };
 
 exports.deleteStock = (req, res) => {
