@@ -51,5 +51,23 @@ FROM
 LEFT JOIN
     product p ON s.product_id = p.id
 LEFT JOIN
-    users u ON s.users_id = u.id;
+    users u ON s.users_id = u.id
+WHERE 
+    p.name ILIKE '%ge%' 
+AND 
+    ('1'::INT IS NULL OR s.type = '1'::INT) 
+ORDER BY 
+    s."createdAt" ASC
+LIMIT 
+    5 
+OFFSET 
+    0;
+
+
+
+
+
+
+
+
 

@@ -12,7 +12,7 @@ exports.selectAllUser = (filter, cb) => {
 
 exports.selectCountAllUser = (filter, cb) => {
   db.query(
-    `SELECT COUNT("name") AS "totalData" FROM "users"  WHERE name ILIKE $1 AND ($2::INT IS NULL OR "role" = $2::INT)`,
+    `SELECT COUNT(${filter.searchBy}) AS "totalData" FROM "users"  WHERE ${filter.searchBy} ILIKE $1 AND ($2::INT IS NULL OR "role" = $2::INT)`,
     [`%${filter.search}%`, filter.role],
     cb
   );

@@ -10,7 +10,7 @@ exports.selectAllProduct = (filter, cb) => {
 
 exports.selectCountAllProduct = (filter, cb) => {
   db.query(
-    `SELECT COUNT("name") AS "totalData" FROM "product" WHERE name ILIKE $1`,
+    `SELECT COUNT(${filter.searchBy}) AS "totalData" FROM "product" WHERE ${filter.searchBy} ILIKE $1`,
     [`%${filter.search}%`],
     cb
   );
