@@ -1,9 +1,11 @@
+const filter = require("../helpers/filter");
 const response = require("../helpers/response");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../helpers/env");
 const { changeProduct, selectProduct } = require("../models/product.model");
 const {
   selectAllStock,
+  selectCountAllStock,
   insertStock,
   changeStock,
   dropStock,
@@ -12,13 +14,23 @@ const {
 
 exports.readAllStock = (req, res) => {
   try {
-    selectAllStock((error, data) => {
-      return res.status(200).json({
-        status: true,
-        message: "Lists data of stock",
-        results: data.rows,
+    const searchable = ["name", "remark", "type", "date", "createdAt", "u", "p", "s"];
+    const sortable = ["name", "remark", "type", "date", "createdAt", "u", "p", "s"];
+
+    filter(req.query, searchable, sortable, selectCountAllStock, res, (filter, pageInfo) => {
+      selectAllStock(filter, (error, data) => {
+        if (error) {
+          return response(res, 404, { message: "Error in model" });
+        }
+
+        return res.status(200).json({
+          status: true,
+          message: "Lists data of stock",
+          pageInfo,
+          results: data.rows,
+        });
       });
-    });
+    })
   } catch (error) {
     return response(res, 500);
   }
