@@ -7,6 +7,7 @@ const {
   readUser,
   uploadUserPicture,
   readUserOperator,
+  updateUserOperator,
 } = require("../controllers/users.controller");
 const { auth, isAdmin, isOperator } = require("../middlewares/auth");
 const {
@@ -24,6 +25,7 @@ usersRouter.patch("/users/:id", auth, isAdmin, upload, uploadErrorHandler, updat
 usersRouter.delete("/users/:id", auth, isAdmin, deleteUser);
 usersRouter.get("/users/:id", auth, isAdmin, readUser);
 
+usersRouter.patch("/users-operator/:id", auth, isOperator, upload, uploadErrorHandler, updateUserOperator);
 usersRouter.get("/users-operator/:id", auth, isOperator, readUserOperator);
 
 module.exports = usersRouter;
