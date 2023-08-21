@@ -13,7 +13,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
 app.get("/", (req, res) => {
-  return res.send("<h1>It Works</h1>");
+  return res.status(200).json({
+    success: true,
+    message: "Beckend is running well",
+  });
 });
 
 app.use(authRouter);
