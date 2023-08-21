@@ -8,6 +8,7 @@ const {
   changeUser,
   selectCountAllUser,
   changePicture,
+  selectUserbyEmail,
 } = require("../models/users.model");
 const jwt = require("jsonwebtoken")
 const { JWT_SECRET } = require("../helpers/env")
@@ -38,33 +39,41 @@ exports.readAllUser = (req, res) => {
 };
 
 exports.createUser = (req, res) => {
-  const payload = {
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    role: req.body.role,
-    picture: req.file ? req.file.path : null,
-  };
-
-  const mailformat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-  if (!payload.email.match(mailformat)) {
-    return response(res, 400, {
-      message: "You have entered an invalid email address!",
-    });
-  }
-
-  if (payload.password.length < 8) {
-    return response(res, 400, {
-      message: "Password must be 8 or more characters!",
-    });
-  }
-
   try {
-    insertUser(payload, (error, data) => {
-      return res.status(200).json({
-        status: true,
-        message: "User created success",
-        results: data.rows[0],
+    const payload = {
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      role: req.body.role,
+      picture: req.file ? req.file.path : null,
+    };
+
+    const mailformat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    if (!payload.email.match(mailformat)) {
+      return response(res, 400, {
+        message: "You have entered an invalid email address!",
+      });
+    }
+
+    if (payload.password.length < 8) {
+      return response(res, 400, {
+        message: "Password must be 8 or more characters!",
+      });
+    }
+
+    selectUserbyEmail(req.body.email, (error, data) => {
+      if (data.rows.length === 1) {
+        return response(res, 400, {
+          message: "Email sudah digunakan sebelumnya.",
+        });
+      }
+
+      insertUser(payload, (error, data) => {
+        return res.status(200).json({
+          status: true,
+          message: "User created success",
+          results: data.rows[0],
+        });
       });
     })
   } catch (error) {

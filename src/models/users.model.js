@@ -18,6 +18,14 @@ exports.selectCountAllUser = (filter, cb) => {
   );
 };
 
+exports.selectUserbyEmail = (data, cb) => {
+  db.query(
+    `SELECT * FROM users WHERE email = $1`,
+    [data],
+    cb
+  );
+}
+
 exports.insertUser = (data, cb) => {
   const hashedPassword = bcrypt.hashSync(data.password, saltRounds);
   db.query(

@@ -24,17 +24,19 @@ CREATE TABLE "product" (
 );
 
 CREATE TABLE "stock" (
-  "id"            INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  "product_id"    INT NOT NULL,
-  "users_id"      INT NOT NULL,
-  "quantity"      BIGINT NOT NULL,
-  "date"          TIMESTAMP NOT NULL,
-  "type"          INT NOT NULL,
-  "remark"        TEXT,      -- 1 = stock in, 2 = stock out, 3 = edit stock
-  "createdAt"     TIMESTAMPTZ NOT NULL DEFAULT now(),
-  "updatedAt"     TIMESTAMPTZ
+    "id"            INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    "product_id"    INT NOT NULL,
+    "users_id"      INT NOT NULL,
+    "quantity"      BIGINT NOT NULL,
+    "date"          TIMESTAMP NOT NULL,
+    "type"          INT NOT NULL,
+    "remark"        TEXT,      -- 1 = stock in, 2 = stock out, 3 = edit stock
+    "createdAt"     TIMESTAMPTZ NOT NULL DEFAULT now(),
+    "updatedAt"     TIMESTAMPTZ
 );
 
+ALTER TABLE users
+ADD CONSTRAINT users_unique_email UNIQUE (email);
 
 SELECT
     s.id AS stock_id,
