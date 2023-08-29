@@ -6,9 +6,9 @@ const usersRouter = require("./src/routers/user.router");
 const productRouter = require("./src/routers/product.router");
 const stockRouter = require("./src/routers/stock.router");
 
-app.use(cors());
-
 const app = express()
+
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
