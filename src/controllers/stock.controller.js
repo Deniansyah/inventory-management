@@ -14,7 +14,7 @@ const {
 
 exports.readAllStock = (req, res) => {
   try {
-    const searchable = ["name", "remark", "type", "date", "createdAt", "u", "p", "s"];
+    const searchable = ["name", "remark", "type", "date", "createdAt", "u", "p", "s"];  // change initial coloum ex: p = product, u = users, s = stock
     const sortable = ["name", "remark", "type", "date", "createdAt", "u", "p", "s"];
 
     filter(req.query, searchable, sortable, selectCountAllStock, res, (filter, pageInfo) => {
